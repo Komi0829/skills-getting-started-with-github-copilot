@@ -13,6 +13,18 @@ document.addEventListener("DOMContentLoaded", () => {
       // Clear loading message
       activitiesList.innerHTML = "";
 
+      // helper: get initials from name or email
+      function getInitials(text) {
+        if (!text) return "";
+        // use part before @ for emails, otherwise use words
+        const local = text.includes("@") ? text.split("@")[0] : text;
+        const parts = local.split(/[\s._-]+/).filter(Boolean);
+        if (parts.length === 1) {
+          return parts[0].slice(0, 2).toUpperCase();
+        }
+        return (parts[0][0] + parts[1][0]).toUpperCase();
+      }
+
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
         const activityCard = document.createElement("div");
@@ -21,7 +33,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const spotsLeft = details.max_participants - details.participants.length;
 
         const participantsList = details.participants.length > 0
-          ? details.participants.map(p => `<li>${p}</li>`).join('')
+          ? details.participants
+              .map(
+                p => `
+                  <li>
+                    <span class="avatar">${getInitials(p)}</span>
+                    <span class="participant-name">${p}</span>
+                  </li>`
+              ).join('')
           : '<li><em>No participants yet</em></li>';
 
         activityCard.innerHTML = `
