@@ -13,6 +13,11 @@ document.addEventListener("DOMContentLoaded", () => {
       // Clear loading message
       activitiesList.innerHTML = "";
 
+      // Clear existing activity options (keep the placeholder at index 0)
+      while (activitySelect.options.length > 1) {
+        activitySelect.remove(1);
+      }
+
       // helper: get initials from name or email
       function getInitials(text) {
         if (!text) return "";
@@ -25,38 +30,69 @@ document.addEventListener("DOMContentLoaded", () => {
         return (parts[0][0] + parts[1][0]).toUpperCase();
       }
 
-      // Populate activities list
+      // Populate activities list (use DOM methods to avoid injecting HTML)
       Object.entries(activities).forEach(([name, details]) => {
         const activityCard = document.createElement("div");
         activityCard.className = "activity-card";
 
         const spotsLeft = details.max_participants - details.participants.length;
 
-        const participantsList = details.participants.length > 0
-          ? details.participants
-              .map(
-                p => `
-                  <li>
-                    <div class="participant-row">
-                      <span class="avatar">${getInitials(p)}</span>
-                      <span class="participant-name">${p}</span>
-                    </div>
-                  </li>`
-              ).join('')
-          : '<li class="no-participants"><div class="participant-row"><em>No participants yet</em></div></li>';
+        const h4 = document.createElement("h4");
+        h4.textContent = name;
+        activityCard.appendChild(h4);
 
-        activityCard.innerHTML = `
-          <h4>${name}</h4>
-          <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-          <div class="participants-section">
-            <strong>Participants (${details.participants.length}/${details.max_participants}):</strong>
-            <ul class="participants-list">
-              ${participantsList}
-            </ul>
-          </div>
-        `;
+        const desc = document.createElement("p");
+        desc.textContent = details.description;
+        activityCard.appendChild(desc);
+
+        const sched = document.createElement("p");
+        sched.innerHTML = `<strong>Schedule:</strong> ${details.schedule}`;
+        activityCard.appendChild(sched);
+
+        const avail = document.createElement("p");
+        avail.innerHTML = `<strong>Availability:</strong> ${spotsLeft} spots left`;
+        activityCard.appendChild(avail);
+
+        // Participants section (DOM-built)
+        const participantsSection = document.createElement("div");
+        participantsSection.className = "participants-section";
+        const participantsTitle = document.createElement("strong");
+        participantsTitle.textContent = `Participants (${details.participants.length}/${details.max_participants}):`;
+        participantsSection.appendChild(participantsTitle);
+
+        const ul = document.createElement("ul");
+        ul.className = "participants-list";
+
+        if (!details.participants || details.participants.length === 0) {
+          const li = document.createElement("li");
+          li.className = "no-participants";
+          const row = document.createElement("div");
+          row.className = "participant-row";
+          const em = document.createElement("em");
+          em.textContent = "No participants yet";
+          row.appendChild(em);
+          li.appendChild(row);
+          ul.appendChild(li);
+        } else {
+          details.participants.forEach((p) => {
+            const li = document.createElement("li");
+            const row = document.createElement("div");
+            row.className = "participant-row";
+            const avatar = document.createElement("span");
+            avatar.className = "avatar";
+            avatar.textContent = getInitials(p);
+            const nameSpan = document.createElement("span");
+            nameSpan.className = "participant-name";
+            nameSpan.textContent = p;
+            row.appendChild(avatar);
+            row.appendChild(nameSpan);
+            li.appendChild(row);
+            ul.appendChild(li);
+          });
+        }
+
+        participantsSection.appendChild(ul);
+        activityCard.appendChild(participantsSection);
 
         activitiesList.appendChild(activityCard);
 
