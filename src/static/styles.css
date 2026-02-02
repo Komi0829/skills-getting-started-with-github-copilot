@@ -91,33 +91,44 @@ section h3 {
 
 .participants-list {
   margin: 0;
-  padding: 0;
-  list-style: none;
+  padding-left: 20px; /* show bullets */
+  list-style: disc;
   font-size: 14px;
   color: #555;
   display: block;
 }
 
 .participants-list li {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: list-item;
   padding: 8px 0;
   border-bottom: 1px dashed #eee;
   min-height: 40px;
   transition: background-color 0.2s ease;
   border-radius: 4px;
-  padding-left: 8px;
-  padding-right: 8px;
-  margin: 0 -8px;
+  margin: 0;
+}
+
+/* inner row keeps avatar and name aligned */
+.participant-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 8px; /* keep content away from bullet */
+}
+
+/* No participants styling */
+.participants-list li.no-participants em {
+  color: #777;
+  font-style: italic;
 }
 
 .participants-list li:hover {
   background-color: #f0f7ff;
 }
 
-.participants-list li:last-child {
-  border-bottom: none;
+.participants-list li:hover .avatar {
+  transform: scale(1.05);
+  box-shadow: 0 2px 6px rgba(26, 35, 126, 0.12);
 }
 
 .avatar {
@@ -134,11 +145,6 @@ section h3 {
   flex: 0 0 36px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.participants-list li:hover .avatar {
-  transform: scale(1.1);
-  box-shadow: 0 2px 6px rgba(26, 35, 126, 0.2);
 }
 
 .participant-name {

@@ -37,11 +37,13 @@ document.addEventListener("DOMContentLoaded", () => {
               .map(
                 p => `
                   <li>
-                    <span class="avatar">${getInitials(p)}</span>
-                    <span class="participant-name">${p}</span>
+                    <div class="participant-row">
+                      <span class="avatar">${getInitials(p)}</span>
+                      <span class="participant-name">${p}</span>
+                    </div>
                   </li>`
               ).join('')
-          : '<li><em>No participants yet</em></li>';
+          : '<li class="no-participants"><div class="participant-row"><em>No participants yet</em></div></li>';
 
         activityCard.innerHTML = `
           <h4>${name}</h4>
